@@ -140,13 +140,22 @@ const (
 func (i *player) GetLoopStatus() LoopStatus {
 	return LoopStatus(getProperty(i.obj, playerInterface, "LoopStatus").String())
 }
+func (i *player) SetLoopStatus(loopStatus LoopStatus) {
+	setProperty(i.obj, playerInterface, "LoopStatus", loopStatus)
+}
 
 func (i *player) GetRate() float64 {
 	return getProperty(i.obj, playerInterface, "Rate").Value().(float64)
 }
+func (i *player) SetRate(rate float64) {
+	setProperty(i.obj, playerInterface, "Rate", rate)
+}
 
 func (i *player) GetShuffle() bool {
 	return getProperty(i.obj, playerInterface, "Shuffle").Value().(bool)
+}
+func (i *player) SetShuffle(shuffle bool) {
+	setProperty(i.obj, playerInterface, "Shuffle", shuffle)
 }
 
 func (i *player) GetMetadata() map[string]dbus.Variant {

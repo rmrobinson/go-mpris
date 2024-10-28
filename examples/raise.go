@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"github.com/godbus/dbus"
-	"github.com/emersion/go-mpris"
+	"github.com/rmrobinson/go-mpris"
 )
 
 func main() {

@@ -3,15 +3,16 @@ package mpris
 import (
 	"log"
 	"strings"
+
 	"github.com/godbus/dbus"
 )
 
 const (
-	dbusObjectPath = "/org/mpris/MediaPlayer2"
+	dbusObjectPath          = "/org/mpris/MediaPlayer2"
 	propertiesChangedSignal = "org.freedesktop.DBus.Properties.PropertiesChanged"
 
-	baseInterface = "org.mpris.MediaPlayer2"
-	playerInterface = "org.mpris.MediaPlayer2.Player"
+	baseInterface      = "org.mpris.MediaPlayer2"
+	playerInterface    = "org.mpris.MediaPlayer2.Player"
 	trackListInterface = "org.mpris.MediaPlayer2.TrackList"
 	playlistsInterface = "org.mpris.MediaPlayer2.Playlists"
 
@@ -101,12 +102,8 @@ func (i *player) Play() {
 	i.obj.Call(playerInterface+".Play", 0)
 }
 
-func (i *player) Seek(offset int64) {
+func (i *player) SeekTo(offset int64) {
 	i.obj.Call(playerInterface+".Seek", 0, offset)
-}
-
-func (i *player) SetPosition(trackId *dbus.ObjectPath, position int64) {
-	i.obj.Call(playerInterface+".SetPosition", 0, trackId, position)
 }
 
 func (i *player) OpenUri(uri string) {
@@ -117,24 +114,27 @@ type PlaybackStatus string
 
 const (
 	PlaybackPlaying PlaybackStatus = "Playing"
-	PlaybackPaused = "Paused"
-	PlaybackStopped = "Stopped"
+	PlaybackPaused                 = "Paused"
+	PlaybackStopped                = "Stopped"
 )
 
 func (i *player) GetPlaybackStatus() PlaybackStatus {
-	variant, err := i.obj.GetProperty(playerInterface+".PlaybackStatus")
+	variant, err := i.obj.GetProperty(playerInterface + ".PlaybackStatus")
 	if err != nil {
 		return ""
 	}
-	return PlaybackStatus(variant.String())
+
+	// Some MPRIS servers (such as ncspot) return the status string *with* quotes.
+	status := strings.ReplaceAll(variant.String(), "\"", "")
+	return PlaybackStatus(status)
 }
 
 type LoopStatus string
 
 const (
-	LoopNone LoopStatus = "None"
-	LoopTrack = "Track"
-	LoopPlaylist = "Playlist"
+	LoopNone     LoopStatus = "None"
+	LoopTrack               = "Track"
+	LoopPlaylist            = "Playlist"
 )
 
 func (i *player) GetLoopStatus() LoopStatus {
